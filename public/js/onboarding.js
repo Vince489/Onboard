@@ -10,6 +10,7 @@ let socket;
 let isRecording = false;
 let mediaRecorder;
 let audioChunks = [];
+let autoStartSection = true; // Flag to control auto-starting sections
 
 // DOM Elements
 const chatMessages = document.getElementById('chat-messages');
@@ -29,10 +30,29 @@ document.addEventListener('DOMContentLoaded', () => {
   loadProfile();
   addEventListeners();
 
-  // Add welcome message
+  // Add welcome message and auto-start first section
   setTimeout(() => {
     addAgentMessage('Welcome to the PULSE™ onboarding! I\'m Virtra, your personal onboarding agent. I\'ll help you configure your PULSE™ Smart Inbox through a conversational process. Let\'s start with some basic information about you.');
+
+    // Auto-start the first section after welcome message
+    if (autoStartSection) {
+      setTimeout(() => {
+        addTypingIndicator();
+
+        setTimeout(() => {
+          // Send an empty message to start the section
+          socket.emit('message', {
+            message: `start ${currentSection}`,
+            section: currentSection,
+            profile
+          });
+        }, 1000);
+      }, 1500);
+    }
   }, 500);
+
+  // Add reset and clear memory buttons to the options
+  addManagementButtons();
 });
 
 // Initialize Socket.IO connection
@@ -61,13 +81,28 @@ function initializeSocket() {
       playAudio(data.audioUrl);
     }
 
-    // Handle next action
-    if (data.nextAction === 'complete_section') {
+    // Check if the response contains a question or is asking for more information
+    const isAskingForMoreInfo = data.response.includes('?') ||
+                               data.response.toLowerCase().includes('tell me') ||
+                               data.response.toLowerCase().includes('what about') ||
+                               data.response.toLowerCase().includes('anything else') ||
+                               data.response.toLowerCase().includes('should know');
+
+    // Check if this is a skip response
+    const isSkipResponse = data.response.toLowerCase().includes('skip this section') ||
+                          data.response.toLowerCase().includes('like to skip');
+
+    // Handle next action - only show completion if not asking for more info
+    // For skip responses, we always want to show the completion prompt
+    if (data.nextAction === 'complete_section' && (isSkipResponse || !isAskingForMoreInfo)) {
+      // Mark section as complete and show completion prompt
+      // The prompt will have a button to continue to next section
       completeSection(currentSection);
-      moveToNextSection();
-    } else if (data.nextAction === 'complete_onboarding') {
+      // Note: moveToNextSection() is now called from the button click handler
+    } else if (data.nextAction === 'complete_onboarding' && !isAskingForMoreInfo) {
+      // For the final section
       completeSection(currentSection);
-      showCompletionMessage();
+      // Note: showCompletionMessage() is now called from the button click handler
     }
   });
 
@@ -167,7 +202,22 @@ function handleCommand(command) {
       sendCommandMessage('help');
       break;
     case 'skip':
-      sendCommandMessage('skip');
+      // Show a confirmation dialog before skipping
+      if (confirm('Are you sure you want to skip this section? Completing all sections provides the best experience with your PULSE™ Smart Inbox.')) {
+        // Add a system message about skipping
+        addSystemMessage('Skipping the current section. You can always come back to it later.');
+
+        // Add a special skip message that will be handled differently
+        addUserMessage('skip section');
+        addTypingIndicator();
+
+        // Send a special skip message to the server
+        socket.emit('message', {
+          message: 'skip_section_command',
+          section: currentSection,
+          profile
+        });
+      }
       break;
     case 'back':
       sendCommandMessage('back');
@@ -459,6 +509,63 @@ function updateProgress() {
   progressText.textContent = `${progressPercent}% Complete`;
 }
 
+// Add section completion prompt
+function addSectionCompletionPrompt(section) {
+  const isLastSection = section === 'consent';
+  const promptElement = document.createElement('div');
+  promptElement.className = 'section-completion-prompt';
+
+  // Check if this was likely a skipped section
+  const lastMessage = document.querySelector('.message:last-of-type');
+  const isSkipped = lastMessage && lastMessage.textContent.toLowerCase().includes('skip this section');
+
+  // Different message for the final section
+  if (isLastSection) {
+    promptElement.innerHTML = `
+      <div class="completion-icon">
+        <i class="fas fa-check-circle"></i>
+      </div>
+      <h3>Section Complete!</h3>
+      <p>You've completed the ${formatSectionName(section)} section.</p>
+      <p>This is the final section of the onboarding process.</p>
+      <button class="btn primary-btn continue-btn">Complete Onboarding</button>
+    `;
+  } else if (isSkipped) {
+    promptElement.innerHTML = `
+      <div class="completion-icon">
+        <i class="fas fa-forward"></i>
+      </div>
+      <h3>Section Skipped</h3>
+      <p>You've chosen to skip the ${formatSectionName(section)} section.</p>
+      <p><small>You can always come back to complete this section later for a better personalized experience.</small></p>
+      <button class="btn primary-btn continue-btn">Continue to Next Section</button>
+    `;
+  } else {
+    promptElement.innerHTML = `
+      <div class="completion-icon">
+        <i class="fas fa-check-circle"></i>
+      </div>
+      <h3>Section Complete!</h3>
+      <p>You've completed the ${formatSectionName(section)} section.</p>
+      <button class="btn primary-btn continue-btn">Continue to Next Section</button>
+    `;
+  }
+
+  chatMessages.appendChild(promptElement);
+  scrollToBottom();
+
+  // Add event listener to the continue button
+  const continueBtn = promptElement.querySelector('.continue-btn');
+  continueBtn.addEventListener('click', () => {
+    if (isLastSection) {
+      showCompletionMessage();
+    } else {
+      moveToNextSection();
+    }
+    promptElement.remove();
+  });
+}
+
 // Complete current section
 function completeSection(section) {
   if (!completedSections.includes(section)) {
@@ -468,6 +575,9 @@ function completeSection(section) {
 
     // Save progress
     saveProgress();
+
+    // Add completion prompt instead of automatically moving to next section
+    addSectionCompletionPrompt(section);
   }
 }
 
@@ -488,6 +598,20 @@ function switchToSection(section) {
 
   // Add section transition message
   addSystemMessage(`Switching to ${formatSectionName(section)} section`);
+
+  // Auto-start the section with a typing indicator and delay
+  if (autoStartSection) {
+    addTypingIndicator();
+
+    setTimeout(() => {
+      // Send an empty message to start the section
+      socket.emit('message', {
+        message: `start ${section}`,
+        section: currentSection,
+        profile
+      });
+    }, 1000);
+  }
 
   // Save progress
   saveProgress();
@@ -514,19 +638,42 @@ async function saveProgress() {
 
 // Show completion message
 function showCompletionMessage() {
-  addAgentMessage('Congratulations! You\'ve completed the PULSE™ onboarding process. Your Smart Inbox is now configured according to your preferences.');
+  // Add a delay before showing the completion message
+  setTimeout(() => {
+    // Add agent message
+    addAgentMessage('Congratulations! You\'ve completed the PULSE™ onboarding process. Your Smart Inbox is now configured according to your preferences.');
 
-  // Add completion button
-  const completionElement = document.createElement('div');
-  completionElement.className = 'completion-message';
-  completionElement.innerHTML = `
-    <h3>Onboarding Complete!</h3>
-    <p>Your PULSE™ Smart Inbox is ready to use.</p>
-    <button class="btn primary-btn" onclick="window.location.href='/'">Return to Home</button>
-  `;
+    // Add system message explaining next steps
+    setTimeout(() => {
+      addSystemMessage('Your profile has been saved and will be used to personalize your PULSE™ Smart Inbox experience.');
+    }, 1000);
 
-  chatMessages.appendChild(completionElement);
-  scrollToBottom();
+    // Add enhanced completion message with animation
+    setTimeout(() => {
+      const completionElement = document.createElement('div');
+      completionElement.className = 'completion-message animated';
+      completionElement.innerHTML = `
+        <div class="completion-icon">
+          <i class="fas fa-check-circle"></i>
+        </div>
+        <h3>Onboarding Complete!</h3>
+        <p class="completion-summary">All 10 sections completed successfully</p>
+        <p>Your PULSE™ Smart Inbox is now configured and ready to use.</p>
+        <div class="completion-actions">
+          <button class="btn primary-btn" onclick="window.location.href='/'">Return to Home</button>
+          <button class="btn secondary-btn" onclick="resetOnboarding()">Start Over</button>
+        </div>
+      `;
+
+      chatMessages.appendChild(completionElement);
+      scrollToBottom();
+
+      // Add animation class after a small delay
+      setTimeout(() => {
+        completionElement.classList.add('show');
+      }, 100);
+    }, 2000);
+  }, 500);
 }
 
 // Format section name
@@ -542,4 +689,122 @@ function playAudio(url) {
   audioPlayer.play().catch(error => {
     console.warn('Error playing audio:', error);
   });
+}
+
+// Reset onboarding
+async function resetOnboarding() {
+  // Show confirmation dialog
+  if (!confirm('Are you sure you want to reset your onboarding progress? This will delete all your data and start over.')) {
+    return;
+  }
+
+  try {
+    // Call the reset API
+    const response = await fetch('/api/reset', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+      // Clear local variables
+      currentSection = 'personalInfo';
+      completedSections = [];
+      profile = {};
+
+      // Clear chat messages
+      chatMessages.innerHTML = '';
+
+      // Update UI
+      updateSectionUI();
+      updateProgress();
+
+      // Add system message
+      addSystemMessage('Onboarding has been reset. Starting over from the beginning.');
+
+      // Auto-start the first section
+      setTimeout(() => {
+        addTypingIndicator();
+
+        setTimeout(() => {
+          // Add welcome message
+          removeTypingIndicator();
+          addAgentMessage('Welcome to the PULSE™ onboarding! I\'m Virtra, your personal onboarding agent. I\'ll help you configure your PULSE™ Smart Inbox through a conversational process. Let\'s start with some basic information about you.');
+
+          // Start the first section
+          setTimeout(() => {
+            addTypingIndicator();
+
+            setTimeout(() => {
+              socket.emit('message', {
+                message: 'start personalInfo',
+                section: currentSection,
+                profile
+              });
+            }, 1000);
+          }, 1500);
+        }, 1500);
+      }, 500);
+    } else {
+      addSystemMessage('Error resetting onboarding. Please try again.');
+    }
+  } catch (error) {
+    console.error('Error resetting onboarding:', error);
+    addSystemMessage('Error resetting onboarding. Please try again.');
+  }
+}
+
+// Clear agent memory
+async function clearAgentMemory() {
+  // Show confirmation dialog
+  if (!confirm('Are you sure you want to clear the agent\'s memory? This will reset the conversation context but keep your profile data.')) {
+    return;
+  }
+
+  try {
+    // Call the clear memory API
+    const response = await fetch('/api/clear-memory', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+      // Add system message
+      addSystemMessage('Agent memory has been cleared. The agent will not remember previous conversations but your profile data is preserved.');
+    } else {
+      addSystemMessage('Error clearing agent memory. Please try again.');
+    }
+  } catch (error) {
+    console.error('Error clearing agent memory:', error);
+    addSystemMessage('Error clearing agent memory. Please try again.');
+  }
+}
+
+// Add management buttons to the options container
+function addManagementButtons() {
+  const inputOptions = document.querySelector('.input-options');
+
+  // Create reset button
+  const resetButton = document.createElement('button');
+  resetButton.className = 'option-btn danger-btn';
+  resetButton.textContent = 'Reset Onboarding';
+  resetButton.addEventListener('click', resetOnboarding);
+
+  // Create clear memory button
+  const clearMemoryButton = document.createElement('button');
+  clearMemoryButton.className = 'option-btn warning-btn';
+  clearMemoryButton.textContent = 'Clear Agent Memory';
+  clearMemoryButton.addEventListener('click', clearAgentMemory);
+
+  // Add buttons to the options container
+  inputOptions.appendChild(document.createElement('hr'));
+  inputOptions.appendChild(resetButton);
+  inputOptions.appendChild(clearMemoryButton);
 }

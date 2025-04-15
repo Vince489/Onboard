@@ -168,7 +168,26 @@ io.on('connection', (socket) => {
         return;
       }
 
-      // Get agent response
+      // Special handling for skip command
+      if (message === 'skip_section_command') {
+        // Create a custom response for skipping
+        const skipResponse = {
+          response: "I understand you'd like to skip this section. While completing all sections provides the best personalized experience with your PULSE™ Smart Inbox, we can always come back to this later. Let's move on to the next section.",
+          JSONUpdate: {},
+          nextAction: "complete_section"
+        };
+
+        // Send the skip response
+        socket.emit('response', {
+          response: skipResponse.response,
+          profile: profile,
+          nextAction: skipResponse.nextAction
+        });
+
+        return;
+      }
+
+      // Normal message handling
       const agentResponse = await promptPulseAgent(
         message,
         section || 'personalInfo',
@@ -182,8 +201,15 @@ io.on('connection', (socket) => {
       );
 
       // Update completedSections if the agent indicates the section is complete
+      // But only if the agent is not asking for more information
       let completedSections = profile?.completedSections || [];
-      if (agentResponse.nextAction === 'complete_section' && !completedSections.includes(section)) {
+      const isAskingForMoreInfo = agentResponse.response.includes('?') ||
+                                 agentResponse.response.toLowerCase().includes('tell me') ||
+                                 agentResponse.response.toLowerCase().includes('what about') ||
+                                 agentResponse.response.toLowerCase().includes('anything else') ||
+                                 agentResponse.response.toLowerCase().includes('should know');
+
+      if (agentResponse.nextAction === 'complete_section' && !isAskingForMoreInfo && !completedSections.includes(section)) {
         completedSections.push(section);
         console.log(`Section ${section} completed and added to completedSections array`);
       }

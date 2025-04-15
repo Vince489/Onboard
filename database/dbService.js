@@ -1,6 +1,6 @@
 /**
  * Database Service
- * 
+ *
  * Provides functions for interacting with the database.
  */
 
@@ -21,7 +21,7 @@ async function saveProfile(userId, profileData) {
     if (isDatabaseConnected()) {
       // Check if profile exists
       let profile = await Profile.findOne({ userId });
-      
+
       if (profile) {
         // Update existing profile
         Object.assign(profile, {
@@ -37,7 +37,7 @@ async function saveProfile(userId, profileData) {
           currentQuestionIndex: profileData.currentQuestionIndex || 0,
           completionPercentage: profileData.completionPercentage || 0
         });
-        
+
         await profile.save();
         console.log(`Profile updated in MongoDB for user: ${userId}`);
       } else {
@@ -56,12 +56,12 @@ async function saveProfile(userId, profileData) {
           currentQuestionIndex: profileData.currentQuestionIndex || 0,
           completionPercentage: profileData.completionPercentage || 0
         });
-        
+
         await profile.save();
         console.log(`Profile created in MongoDB for user: ${userId}`);
       }
     }
-    
+
     // Always save to file system as backup
     const profilesDir = path.join(__dirname, '../profiles');
     try {
@@ -69,14 +69,14 @@ async function saveProfile(userId, profileData) {
     } catch (err) {
       if (err.code !== 'EEXIST') throw err;
     }
-    
+
     const profilePath = path.join(profilesDir, `${userId}.json`);
     await fs.writeFile(profilePath, JSON.stringify(profileData, null, 2));
-    
+
     return true;
   } catch (err) {
     console.error('Error saving profile:', err);
-    
+
     // Try to save to file system as fallback
     try {
       const profilesDir = path.join(__dirname, '../profiles');
@@ -97,10 +97,10 @@ async function loadProfile(userId) {
     // If database is connected, try to load from MongoDB
     if (isDatabaseConnected()) {
       const profile = await Profile.findOne({ userId });
-      
+
       if (profile) {
         console.log(`Profile loaded from MongoDB for user: ${userId}`);
-        
+
         // Convert MongoDB document to expected format
         return {
           profile: {
@@ -118,11 +118,11 @@ async function loadProfile(userId) {
         };
       }
     }
-    
+
     // If not found in MongoDB or database not connected, try file system
     const profilesDir = path.join(__dirname, '../profiles');
     const profilePath = path.join(profilesDir, `${userId}.json`);
-    
+
     try {
       const data = await fs.readFile(profilePath, 'utf8');
       console.log(`Profile loaded from file system for user: ${userId}`);
@@ -137,7 +137,7 @@ async function loadProfile(userId) {
     }
   } catch (err) {
     console.error('Error loading profile:', err);
-    
+
     // Try to load from file system as fallback
     try {
       const profilesDir = path.join(__dirname, '../profiles');
@@ -163,7 +163,7 @@ async function saveSession(sessionId, sessionData) {
     if (isDatabaseConnected()) {
       // Check if session exists
       let session = await Session.findOne({ sessionId });
-      
+
       if (session) {
         // Update existing session
         Object.assign(session, {
@@ -172,7 +172,7 @@ async function saveSession(sessionId, sessionData) {
           conversationHistory: sessionData.conversationHistory || [],
           endTime: sessionData.endTime
         });
-        
+
         await session.save();
         console.log(`Session updated in MongoDB: ${sessionId}`);
       } else {
@@ -185,12 +185,12 @@ async function saveSession(sessionId, sessionData) {
           startTime: sessionData.startTime || new Date(),
           endTime: sessionData.endTime
         });
-        
+
         await session.save();
         console.log(`Session created in MongoDB: ${sessionId}`);
       }
     }
-    
+
     // Always save to file system as backup
     const sessionsDir = path.join(__dirname, '../sessions');
     try {
@@ -198,17 +198,17 @@ async function saveSession(sessionId, sessionData) {
     } catch (err) {
       if (err.code !== 'EEXIST') throw err;
     }
-    
+
     const sessionPath = path.join(sessionsDir, `${sessionId}.json`);
     await fs.writeFile(sessionPath, JSON.stringify({
       ...sessionData,
       lastUpdated: new Date().toISOString()
     }, null, 2));
-    
+
     return true;
   } catch (err) {
     console.error('Error saving session:', err);
-    
+
     // Try to save to file system as fallback
     try {
       const sessionsDir = path.join(__dirname, '../sessions');
@@ -232,7 +232,7 @@ async function loadSession(sessionId) {
     // If database is connected, try to load from MongoDB
     if (isDatabaseConnected()) {
       const session = await Session.findOne({ sessionId });
-      
+
       if (session) {
         console.log(`Session loaded from MongoDB: ${sessionId}`);
         return {
@@ -246,11 +246,11 @@ async function loadSession(sessionId) {
         };
       }
     }
-    
+
     // If not found in MongoDB or database not connected, try file system
     const sessionsDir = path.join(__dirname, '../sessions');
     const sessionPath = path.join(sessionsDir, `${sessionId}.json`);
-    
+
     try {
       const data = await fs.readFile(sessionPath, 'utf8');
       console.log(`Session loaded from file system: ${sessionId}`);
@@ -265,7 +265,7 @@ async function loadSession(sessionId) {
     }
   } catch (err) {
     console.error('Error loading session:', err);
-    
+
     // Try to load from file system as fallback
     try {
       const sessionsDir = path.join(__dirname, '../sessions');
@@ -284,11 +284,43 @@ async function loadSession(sessionId) {
   }
 }
 
+// Delete a user profile
+async function deleteProfile(userId) {
+  try {
+    // If database is connected, delete from MongoDB
+    if (isDatabaseConnected()) {
+      const result = await Profile.deleteOne({ userId });
+      if (result.deletedCount > 0) {
+        console.log(`Profile deleted from MongoDB for user: ${userId}`);
+      }
+    }
+
+    // Always try to delete from file system as well
+    const profilesDir = path.join(__dirname, '../profiles');
+    const profilePath = path.join(profilesDir, `${userId}.json`);
+
+    try {
+      await fs.unlink(profilePath);
+      console.log(`Profile deleted from file system for user: ${userId}`);
+    } catch (fsErr) {
+      if (fsErr.code !== 'ENOENT') {
+        console.error('Error deleting profile from file system:', fsErr);
+      }
+    }
+
+    return true;
+  } catch (err) {
+    console.error('Error deleting profile:', err);
+    return false;
+  }
+}
+
 // Export the database service functions
 module.exports = {
   initializeDatabase,
   saveProfile,
   loadProfile,
   saveSession,
-  loadSession
+  loadSession,
+  deleteProfile
 };

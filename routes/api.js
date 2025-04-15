@@ -216,6 +216,51 @@ router.get('/tts', async (req, res) => {
   }
 });
 
+// Reset onboarding endpoint
+router.post('/reset', async (req, res) => {
+  try {
+    const userId = req.session.userId;
+
+    if (!userId) {
+      return res.status(400).json({ error: 'No user session found' });
+    }
+
+    // Delete user profile
+    await db.deleteProfile(userId);
+
+    // Clear chat instance
+    if (typeof promptPulseAgent.clearChatInstances === 'function') {
+      promptPulseAgent.clearChatInstances(userId);
+    }
+
+    res.json({ success: true, message: 'Onboarding reset successfully' });
+  } catch (error) {
+    console.error('Error resetting onboarding:', error);
+    res.status(500).json({ error: 'Failed to reset onboarding' });
+  }
+});
+
+// Clear agent memory endpoint
+router.post('/clear-memory', async (req, res) => {
+  try {
+    const userId = req.session.userId;
+
+    if (!userId) {
+      return res.status(400).json({ error: 'No user session found' });
+    }
+
+    // Clear chat instance
+    if (typeof promptPulseAgent.clearChatInstances === 'function') {
+      promptPulseAgent.clearChatInstances(userId);
+    }
+
+    res.json({ success: true, message: 'Agent memory cleared successfully' });
+  } catch (error) {
+    console.error('Error clearing agent memory:', error);
+    res.status(500).json({ error: 'Failed to clear agent memory' });
+  }
+});
+
 // Serve cached audio files
 router.get('/audio/:filename', async (req, res) => {
   try {

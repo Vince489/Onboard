@@ -251,7 +251,29 @@ function createFallbackResponse(currentSection, userMessage) {
   };
 }
 
+// Function to clear chat instances
+function clearChatInstances(userId = null) {
+  if (userId) {
+    // Clear specific user's chat instance
+    if (chatInstances[userId]) {
+      delete chatInstances[userId];
+      console.log(`[Agent] Cleared chat instance for user: ${userId}`);
+      return true;
+    }
+    return false;
+  } else {
+    // Clear all chat instances
+    Object.keys(chatInstances).forEach(key => delete chatInstances[key]);
+    console.log('[Agent] Cleared all chat instances');
+    return true;
+  }
+}
+
+// Attach clearChatInstances to promptPulseAgent for access in API routes
+promptPulseAgent.clearChatInstances = clearChatInstances;
+
 module.exports = {
   promptPulseAgent,
-  SYSTEM_PROMPT
+  SYSTEM_PROMPT,
+  clearChatInstances
 };
