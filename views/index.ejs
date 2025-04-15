@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">
+        <span class="logo-text">PULSE<span class="logo-tm">™</span></span>
+      </div>
+      <h1>Smart Inbox</h1>
+      <p>Onboarding Experience</p>
+    </header>
+
+    <main>
+      <section class="welcome-card">
+        <h2>Welcome to PULSE™</h2>
+        <p>I'm Virtra, your personal onboarding agent. I'll guide you through setting up your PULSE™ Smart Inbox configuration.</p>
+
+        <div class="features">
+          <div class="feature">
+            <i class="fas fa-comments"></i>
+            <h3>Conversational</h3>
+            <p>Natural dialogue instead of forms</p>
+          </div>
+          <div class="feature">
+            <i class="fas fa-brain"></i>
+            <h3>Intelligent</h3>
+            <p>Adapts to your needs</p>
+          </div>
+          <div class="feature">
+            <i class="fas fa-save"></i>
+            <h3>Persistent</h3>
+            <p>Save and resume anytime</p>
+          </div>
+        </div>
+
+        <p class="description">
+          This conversation will help me understand your:
+          <ul>
+            <li>Communication style and preferences</li>
+            <li>Email habits and workflow</li>
+            <li>Priorities and important contacts</li>
+            <li>And much more!</li>
+          </ul>
+        </p>
+
+        <a href="/onboarding" class="btn primary-btn">Start Onboarding</a>
+      </section>
+    </main>
+
+    <footer>
+      <p>&copy; <%= new Date().getFullYear() %> PULSE™ Smart Inbox. All rights reserved.</p>
+    </footer>
+  </div>
+
+  <script src="/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,179 @@
+$ npm install
+
+added 274 packages, and audited 275 packages in 15s
+
+26 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+
+Vince@Virtron MINGW64 ~/Documents/augment-projects/Application
+$ npm start
+
+> pulse-onboarding-agent@1.0.0 start
+> node index.js
+
+[TTS] Google Cloud Text-to-Speech client initialized successfully
+TTS service loaded successfully
+[STT] Google Speech-to-Text client initialized successfully
+STT service loaded successfully
+Connected to MongoDB
+╔════════════════════════════════════════════════════════════╗
+║                                                            ║
+║                 PULSE™ ONBOARDING AGENT                    ║
+║                                                            ║
+╚════════════════════════════════════════════════════════════╝
+
+Welcome to the PULSE™ Smart Inbox onboarding experience!
+I'm Virtra, your personal onboarding agent.
+I'll guide you through setting up your PULSE™ configuration.
+
+This conversation will help me understand your:
+• Communication style and preferences
+• Email habits and workflow
+• Priorities and important contacts
+• And much more!
+
+Let's get started!
+
+Connected to MongoDB
+Welcome to the PULSE™ onboarding. I'll help configure your cognitive agent. You can type 'help' at any time for assistance, 'skip' to move to the next section, 'voice' to use speech input, or 'exit' to save your progress and quit.
+
+Progress: 0% (0/10 sections)
+Current section: personalInfo
+
+Completed sections:
+
+Remaining sections:
+⬜ personalInfo
+⬜ professional
+⬜ communication
+⬜ goals
+⬜ workflow
+⬜ techSetup
+⬜ priorities
+⬜ aiTraining
+⬜ personalization
+⬜ consent
+
+
+You: [TTS] Split text into 1 chunks for TTS processing
+[TTS] Error in synthesizeSpeech: Error: 2 UNKNOWN: Getting metadata from plugin failed with error: error:1E08010C:DECODER routines::unsupported
+    at callErrorFromStatus (C:\Users\Vince\Documents\augment-projects\Application\node_modules\@grpc\grpc-js\build\src\call.js:32:19)
+    at Object.onReceiveStatus (C:\Users\Vince\Documents\augment-projects\Application\node_modules\@grpc\grpc-js\build\src\client.js:193:76)      
+    at Object.onReceiveStatus (C:\Users\Vince\Documents\augment-projects\Application\node_modules\@grpc\grpc-js\build\src\client-interceptors.js:361:141)
+    at Object.onReceiveStatus (C:\Users\Vince\Documents\augment-projects\Application\node_modules\@grpc\grpc-js\build\src\client-interceptors.js:324:181)
+    at C:\Users\Vince\Documents\augment-projects\Application\node_modules\@grpc\grpc-js\build\src\resolving-call.js:135:78
+    at process.processTicksAndRejections (node:internal/process/task_queues:85:11)
+for call at
+    at ServiceClientImpl.makeUnaryRequest (C:\Users\Vince\Documents\augment-projects\Application\node_modules\@grpc\grpc-js\build\src\client.js:161:32)
+    at ServiceClientImpl.<anonymous> (C:\Users\Vince\Documents\augment-projects\Application\node_modules\@grpc\grpc-js\build\src\make-client.js:105:19)
+    at C:\Users\Vince\Documents\augment-projects\Application\node_modules\@google-cloud\text-to-speech\build\src\v1\text_to_speech_client.js:210:29
+    at C:\Users\Vince\Documents\augment-projects\Application\node_modules\google-gax\build\src\normalCalls\timeout.js:44:16
+    at repeat (C:\Users\Vince\Documents\augment-projects\Application\node_modules\google-gax\build\src\normalCalls\retries.js:82:25)
+    at C:\Users\Vince\Documents\augment-projects\Application\node_modules\google-gax\build\src\normalCalls\retries.js:125:13
+    at OngoingCallPromise.call (C:\Users\Vince\Documents\augment-projects\Application\node_modules\google-gax\build\src\call.js:67:27)
+    at NormalApiCaller.call (C:\Users\Vince\Documents\augment-projects\Application\node_modules\google-gax\build\src\normalCalls\normalApiCaller.js:34:19)
+    at C:\Users\Vince\Documents\augment-projects\Application\node_modules\google-gax\build\src\createApiCall.js:112:30
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5) {
+  code: 2,
+  details: 'Getting metadata from plugin failed with error: error:1E08010C:DECODER routines::unsupported',
+  metadata: Metadata { internalRepr: Map(0) {}, options: {} },
+  note: 'Exception occurred in retry method that was not classified as transient'
+}
+[TTS] Error in speak: Error: 2 UNKNOWN: Getting metadata from plugin failed with error: error:1E08010C:DECODER routines::unsupported
+    at callErrorFromStatus (C:\Users\Vince\Documents\augment-projects\Application\node_modules\@grpc\grpc-js\build\src\call.js:32:19)
+    at Object.onReceiveStatus (C:\Users\Vince\Documents\augment-projects\Application\node_modules\@grpc\grpc-js\build\src\client.js:193:76)      
+    at Object.onReceiveStatus (C:\Users\Vince\Documents\augment-projects\Application\node_modules\@grpc\grpc-js\build\src\client-interceptors.js:361:141)
+    at Object.onReceiveStatus (C:\Users\Vince\Documents\augment-projects\Application\node_modules\@grpc\grpc-js\build\src\client-interceptors.js:324:181)
+    at C:\Users\Vince\Documents\augment-projects\Application\node_modules\@grpc\grpc-js\build\src\resolving-call.js:135:78
+    at process.processTicksAndRejections (node:internal/process/task_queues:85:11)
+for call at
+    at ServiceClientImpl.makeUnaryRequest (C:\Users\Vince\Documents\augment-projects\Application\node_modules\@grpc\grpc-js\build\src\client.js:161:32)
+    at ServiceClientImpl.<anonymous> (C:\Users\Vince\Documents\augment-projects\Application\node_modules\@grpc\grpc-js\build\src\make-client.js:105:19)
+    at C:\Users\Vince\Documents\augment-projects\Application\node_modules\@google-cloud\text-to-speech\build\src\v1\text_to_speech_client.js:210:29
+    at C:\Users\Vince\Documents\augment-projects\Application\node_modules\google-gax\build\src\normalCalls\timeout.js:44:16
+    at repeat (C:\Users\Vince\Documents\augment-projects\Application\node_modules\google-gax\build\src\normalCalls\retries.js:82:25)
+    at C:\Users\Vince\Documents\augment-projects\Application\node_modules\google-gax\build\src\normalCalls\retries.js:125:13
+    at OngoingCallPromise.call (C:\Users\Vince\Documents\augment-projects\Application\node_modules\google-gax\build\src\call.js:67:27)
+    at NormalApiCaller.call (C:\Users\Vince\Documents\augment-projects\Application\node_modules\google-gax\build\src\normalCalls\normalApiCaller.js:34:19)
+    at C:\Users\Vince\Documents\augment-projects\Application\node_modules\google-gax\build\src\createApiCall.js:112:30
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5) {
+  code: 2,
+  details: 'Getting metadata from plugin failed with error: error:1E08010C:DECODER routines::unsupported',
+  metadata: Metadata { internalRepr: Map(0) {}, options: {} },
+  note: 'Exception occurred in retry method that was not classified as transient'
+}
+You: hi
+[Agent] Processing message for section: personalInfo
+[Agent] Raw response: ```json
+{
+  "response": "Hi there!  I'm ready to help you with your onboarding.  I've noticed your personal information is currently incomplete. To proceed, please provide your full name, preferred name (if different), primary email address, and preferred language.",
+  "JSONUpdate": {
+    "personalInfo": {}
+  },
+  "nextAction": "awaiting_personal_info"
+}
+```
+
+[Agent] Failed to parse JSON response: SyntaxError: Unexpected token '`', "```json
+{
+"... is not valid JSON
+    at JSON.parse (<anonymous>)
+    at promptPulseAgent (C:\Users\Vince\Documents\augment-projects\Application\agent\pulseAgent.js:97:35)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async Object.handleSection (C:\Users\Vince\Documents\augment-projects\Application\agent\sectionHandlers\personalInfo.js:28:25)
+    at async runPulseOnboarding (C:\Users\Vince\Documents\augment-projects\Application\agent\conversationController.js:314:44)
+    at async main (C:\Users\Vince\Documents\augment-projects\Application\index.js:35:26)
+Virtra: Let's start with your Personal Information. This helps me understand who you are and how to address you.
+
+Hi there!  I'm ready to help you with your onboarding.  I've noticed your personal information is currently incomplete. To proceed, please provide your full name, preferred name (if different), primary email address, and preferred language.
+
+What would you like me to call you (preferred name or nickname)?
+[TTS] Split text into 1 chunks for TTS processing
+[TTS] Error in synthesizeSpeech: Error: 2 UNKNOWN: Getting metadata from plugin failed with error: error:1E08010C:DECODER routines::unsupported  
+    at callErrorFromStatus (C:\Users\Vince\Documents\augment-projects\Application\node_modules\@grpc\grpc-js\build\src\call.js:32:19)
+    at Object.onReceiveStatus (C:\Users\Vince\Documents\augment-projects\Application\node_modules\@grpc\grpc-js\build\src\client.js:193:76)      
+    at Object.onReceiveStatus (C:\Users\Vince\Documents\augment-projects\Application\node_modules\@grpc\grpc-js\build\src\client-interceptors.js:361:141)
+    at Object.onReceiveStatus (C:\Users\Vince\Documents\augment-projects\Application\node_modules\@grpc\grpc-js\build\src\client-interceptors.js:324:181)
+    at C:\Users\Vince\Documents\augment-projects\Application\node_modules\@grpc\grpc-js\build\src\resolving-call.js:135:78
+    at process.processTicksAndRejections (node:internal/process/task_queues:85:11)
+for call at
+    at ServiceClientImpl.makeUnaryRequest (C:\Users\Vince\Documents\augment-projects\Application\node_modules\@grpc\grpc-js\build\src\client.js:161:32)
+    at ServiceClientImpl.<anonymous> (C:\Users\Vince\Documents\augment-projects\Application\node_modules\@grpc\grpc-js\build\src\make-client.js:105:19)
+    at C:\Users\Vince\Documents\augment-projects\Application\node_modules\@google-cloud\text-to-speech\build\src\v1\text_to_speech_client.js:210:29
+    at C:\Users\Vince\Documents\augment-projects\Application\node_modules\google-gax\build\src\normalCalls\timeout.js:44:16
+    at repeat (C:\Users\Vince\Documents\augment-projects\Application\node_modules\google-gax\build\src\normalCalls\retries.js:82:25)
+    at C:\Users\Vince\Documents\augment-projects\Application\node_modules\google-gax\build\src\normalCalls\retries.js:125:13
+    at OngoingCallPromise.call (C:\Users\Vince\Documents\augment-projects\Application\node_modules\google-gax\build\src\call.js:67:27)
+    at NormalApiCaller.call (C:\Users\Vince\Documents\augment-projects\Application\node_modules\google-gax\build\src\normalCalls\normalApiCaller.js:34:19)
+    at C:\Users\Vince\Documents\augment-projects\Application\node_modules\google-gax\build\src\createApiCall.js:112:30 {
+  code: 2,
+  details: 'Getting metadata from plugin failed with error: error:1E08010C:DECODER routines::unsupported',
+  metadata: Metadata { internalRepr: Map(0) {}, options: {} },
+  note: 'Exception occurred in retry method that was not classified as transient'
+}
+[TTS] Error in speak: Error: 2 UNKNOWN: Getting metadata from plugin failed with error: error:1E08010C:DECODER routines::unsupported
+    at callErrorFromStatus (C:\Users\Vince\Documents\augment-projects\Application\node_modules\@grpc\grpc-js\build\src\call.js:32:19)
+    at Object.onReceiveStatus (C:\Users\Vince\Documents\augment-projects\Application\node_modules\@grpc\grpc-js\build\src\client.js:193:76)      
+    at Object.onReceiveStatus (C:\Users\Vince\Documents\augment-projects\Application\node_modules\@grpc\grpc-js\build\src\client-interceptors.js:361:141)
+    at Object.onReceiveStatus (C:\Users\Vince\Documents\augment-projects\Application\node_modules\@grpc\grpc-js\build\src\client-interceptors.js:324:181)
+    at C:\Users\Vince\Documents\augment-projects\Application\node_modules\@grpc\grpc-js\build\src\resolving-call.js:135:78
+    at process.processTicksAndRejections (node:internal/process/task_queues:85:11)
+for call at
+    at ServiceClientImpl.makeUnaryRequest (C:\Users\Vince\Documents\augment-projects\Application\node_modules\@grpc\grpc-js\build\src\client.js:161:32)
+    at ServiceClientImpl.<anonymous> (C:\Users\Vince\Documents\augment-projects\Application\node_modules\@grpc\grpc-js\build\src\make-client.js:105:19)
+    at C:\Users\Vince\Documents\augment-projects\Application\node_modules\@google-cloud\text-to-speech\build\src\v1\text_to_speech_client.js:210:29
+    at C:\Users\Vince\Documents\augment-projects\Application\node_modules\google-gax\build\src\normalCalls\timeout.js:44:16
+    at repeat (C:\Users\Vince\Documents\augment-projects\Application\node_modules\google-gax\build\src\normalCalls\retries.js:82:25)
+    at C:\Users\Vince\Documents\augment-projects\Application\node_modules\google-gax\build\src\normalCalls\retries.js:125:13
+    at OngoingCallPromise.call (C:\Users\Vince\Documents\augment-projects\Application\node_modules\google-gax\build\src\call.js:67:27)
+    at NormalApiCaller.call (C:\Users\Vince\Documents\augment-projects\Application\node_modules\google-gax\build\src\normalCalls\normalApiCaller.js:34:19)
+    at C:\Users\Vince\Documents\augment-projects\Application\node_modules\google-gax\build\src\createApiCall.js:112:30 {
+  code: 2,
+  details: 'Getting metadata from plugin failed with error: error:1E08010C:DECODER routines::unsupported',
+  metadata: Metadata { internalRepr: Map(0) {}, options: {} },
+  note: 'Exception occurred in retry method that was not classified as transient'
+}
+Profile created in MongoDB for user: test_user_123
+You:

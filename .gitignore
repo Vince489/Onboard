@@ -1,0 +1,28 @@
+# Node modules
+node_modules/
+
+# Environment variables
+.env
+
+# Cached audio files
+cache/audio/*.mp3
+
+# Profiles
+profiles/
+
+# Sessions
+sessions/
+
+# Logs
+*.log
+
+# IDE files
+.vscode/
+.idea/
+*.iml
+
+# OS files
+.DS_Store
+Thumbs.db
+agent/config/token.json
+*.json

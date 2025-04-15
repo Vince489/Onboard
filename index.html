@@ -1,0 +1,1207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PULSE™ Onboarding</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-light: #4895ef;
+            --secondary: #3f37c9;
+            --accent: #4cc9f0;
+            --text: #333;
+            --background: #f8f9fa;
+            --white: #ffffff;
+            --gray-light: #e9ecef;
+            --gray: #ced4da;
+            --success: #38b000;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px 0;
+            border-bottom: 1px solid var(--gray);
+        }
+        
+        .header h1 {
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+        
+        .subheader {
+            color: var(--text);
+            margin-bottom: 20px;
+        }
+        
+        .progress-container {
+            margin: 30px 0;
+        }
+        
+        .progress-bar {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .progress-bar::before {
+            content: '';
+            position: absolute;
+            top: 15px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background-color: var(--gray);
+            z-index: 1;
+        }
+        
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 15px;
+            left: 0;
+            width: 0%;
+            height: 3px;
+            background-color: var(--primary);
+            z-index: 2;
+            transition: width 0.3s ease;
+        }
+        
+        .step {
+            width: 33px;
+            height: 33px;
+            border-radius: 50%;
+            background-color: var(--white);
+            border: 3px solid var(--gray);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: var(--text);
+            position: relative;
+            z-index: 3;
+            cursor: pointer; /* Add cursor pointer to indicate clickability */
+            transition: transform 0.2s, background-color 0.3s, border-color 0.3s;
+        }
+
+        .step:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 8px rgba(67, 97, 238, 0.4);
+        }
+        
+        .step.active {
+            background-color: var(--primary);
+            border-color: var(--primary);
+            color: var(--white);
+        }
+        
+        .step.completed {
+            background-color: var(--success);
+            border-color: var(--success);
+            color: var(--white);
+        }
+        
+        .step-label {
+            position: absolute;
+            top: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.8rem;
+            white-space: nowrap;
+            color: var(--text);
+        }
+        
+        .form-section {
+            background-color: var(--white);
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            display: none;
+        }
+        
+        .form-section.active {
+            display: block;
+        }
+        
+        .section-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--gray-light);
+        }
+        
+        .section-icon {
+            font-size: 24px;
+            margin-right: 15px;
+            color: var(--primary);
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(67, 97, 238, 0.1);
+            border-radius: 50%;
+        }
+        
+        .section-title {
+            margin: 0;
+            font-size: 1.4rem;
+            color: var(--primary);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+        
+        .form-group .help-text {
+            color: #6c757d;
+            font-size: 0.85rem;
+            margin-top: 4px;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--gray);
+            border-radius: 4px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(67, 97, 238, 0.2);
+        }
+        
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            margin-right: -10px;
+            margin-left: -10px;
+        }
+        
+        .form-col {
+            flex: 0 0 100%;
+            max-width: 100%;
+            padding-right: 10px;
+            padding-left: 10px;
+        }
+        
+        @media (min-width: 768px) {
+            .form-col-6 {
+                flex: 0 0 50%;
+                max-width: 50%;
+            }
+            
+            .form-col-4 {
+                flex: 0 0 33.333333%;
+                max-width: 33.333333%;
+            }
+        }
+        
+        .btn-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-prev {
+            background-color: var(--gray-light);
+            color: var(--text);
+        }
+        
+        .btn-prev:hover {
+            background-color: var(--gray);
+        }
+        
+        .btn-next {
+            background-color: var(--primary);
+            color: var(--white);
+        }
+        
+        .btn-next:hover {
+            background-color: var(--secondary);
+        }
+        
+        .btn-submit {
+            background-color: var(--success);
+            color: var(--white);
+        }
+        
+        .btn-submit:hover {
+            background-color: #2d9200;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            margin-left: 5px;
+            color: var(--primary);
+        }
+        
+        .tooltip .tooltip-text {
+            visibility: hidden;
+            width: 200px;
+            background-color: #555;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 8px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-weight: normal;
+            font-size: 0.8rem;
+            line-height: 1.4;
+        }
+        
+        .tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        /* Form elements styling */
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            background-size: 16px;
+        }
+        
+        input[type="radio"],
+        input[type="checkbox"] {
+            margin-right: 5px;
+        }
+        
+        .radio-group,
+        .checkbox-group {
+            margin-bottom: 10px;
+        }
+        
+        .checkbox-label,
+        .radio-label {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>PULSE™ Onboarding</h1>
+            <p class="subheader">Complete this form to personalize and train your PULSE™ system</p>
+        </div>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar">
+                <div class="step active" data-step="1" onclick="goToSection(1)">
+                    1
+                    <span class="step-label">Personal Info</span>
+                </div>
+                <div class="step" data-step="2" onclick="goToSection(2)">
+                    2
+                    <span class="step-label">Professional</span>
+                </div>
+                <div class="step" data-step="3" onclick="goToSection(3)">
+                    3
+                    <span class="step-label">Communication</span>
+                </div>
+                <div class="step" data-step="4" onclick="goToSection(4)">
+                    4
+                    <span class="step-label">Goals</span>
+                </div>
+                <div class="step" data-step="5" onclick="goToSection(5)">
+                    5
+                    <span class="step-label">Workflow</span>
+                </div>
+                <div class="step" data-step="6" onclick="goToSection(6)">
+                    6
+                    <span class="step-label">Tech Setup</span>
+                </div>
+                <div class="step" data-step="7" onclick="goToSection(7)">
+                    7
+                    <span class="step-label">Priorities</span>
+                </div>
+                <div class="step" data-step="8" onclick="goToSection(8)">
+                    8
+                    <span class="step-label">AI Training</span>
+                </div>
+                <div class="step" data-step="9" onclick="goToSection(9)">
+                    9
+                    <span class="step-label">Personalization</span>
+                </div>
+                <div class="step" data-step="10" onclick="goToSection(10)">
+                    10
+                    <span class="step-label">Consent</span>
+                </div>
+            </div>
+        </div>
+        
+        <form id="onboardingForm">
+            <!-- Section 1: Identity & Account Information -->
+            <section id="section1" class="form-section active">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <h2 class="section-title">Identity & Account Information</h2>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-col form-col-6">
+                        <div class="form-group">
+                            <label for="fullName">Full Name</label>
+                            <input type="text" id="fullName" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="form-col form-col-6">
+                        <div class="form-group">
+                            <label for="jobTitle">Job Title</label>
+                            <input type="text" id="jobTitle" class="form-control" required>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-col form-col-6">
+                        <div class="form-group">
+                            <label for="department">Department</label>
+                            <input type="text" id="department" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="form-col form-col-6">
+                        <div class="form-group">
+                            <label for="companyName">Company Name</label>
+                            <input type="text" id="companyName" class="form-control" required>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-col form-col-6">
+                        <div class="form-group">
+                            <label for="primaryEmail">Primary Email</label>
+                            <input type="email" id="primaryEmail" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="form-col form-col-6">
+                        <div class="form-group">
+                            <label for="timeZone">Time Zone 
+                                <span class="tooltip">
+                                    <i class="fas fa-info-circle"></i>
+                                    <span class="tooltip-text">This helps ensure accurate scheduling and prioritization.</span>
+                                </span>
+                            </label>
+                            <select id="timeZone" class="form-control" required>
+                                <option value="">Select your time zone</option>
+                                <option value="Pacific/Honolulu">Hawaii (GMT-10:00)</option>
+                                <option value="America/Anchorage">Alaska (GMT-09:00)</option>
+                                <option value="America/Los_Angeles">Pacific Time (GMT-08:00)</option>
+                                <option value="America/Denver">Mountain Time (GMT-07:00)</option>
+                                <option value="America/Chicago">Central Time (GMT-06:00)</option>
+                                <option value="America/New_York">Eastern Time (GMT-05:00)</option>
+                                <option value="America/Halifax">Atlantic Time (GMT-04:00)</option>
+                                <option value="Europe/London">London (GMT+00:00)</option>
+                                <option value="Europe/Paris">Paris, Berlin, Rome (GMT+01:00)</option>
+                                <option value="Asia/Hong_Kong">Hong Kong (GMT+08:00)</option>
+                                <option value="Asia/Tokyo">Tokyo (GMT+09:00)</option>
+                                <option value="Australia/Sydney">Sydney (GMT+10:00)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="additionalEmails">Additional Email Accounts 
+                        <span class="tooltip">
+                            <i class="fas fa-info-circle"></i>
+                            <span class="tooltip-text">Please specify the type of access needed (read-only, send/receive).</span>
+                        </span>
+                    </label>
+                    <textarea id="additionalEmails" class="form-control" placeholder="example@domain.com (read-only), work@company.com (send/receive)"></textarea>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-col form-col-6">
+                        <div class="form-group">
+                            <label for="calendarSystems">Calendar Systems/Accounts
+                                <span class="tooltip">
+                                    <i class="fas fa-info-circle"></i>
+                                    <span class="tooltip-text">Include preferred calendar views or settings (e.g., shared calendars, meeting reminders).</span>
+                                </span>
+                            </label>
+                            <input type="text" id="calendarSystems" class="form-control" placeholder="Google Calendar, Outlook, etc.">
+                        </div>
+                    </div>
+                    <div class="form-col form-col-6">
+                        <div class="form-group">
+                            <label for="taskManagement">Task Management Platforms
+                                <span class="tooltip">
+                                    <i class="fas fa-info-circle"></i>
+                                    <span class="tooltip-text">Include any project management methodologies you use (e.g., Agile, Kanban).</span>
+                                </span>
+                            </label>
+                            <input type="text" id="taskManagement" class="form-control" placeholder="Asana, Trello, etc.">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="btn-container">
+                    <button type="button" class="btn btn-prev hidden">Previous</button>
+                    <button type="button" class="btn btn-next" onclick="nextSection(1)">Next</button>
+                </div>
+            </section>
+            
+            <!-- Section 2: Professional Context -->
+            <section id="section2" class="form-section">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="fas fa-briefcase"></i>
+                    </div>
+                    <h2 class="section-title">Professional Context</h2>
+                </div>
+                
+                <div class="form-group">
+                    <label for="keyResponsibilities">Key Responsibilities
+                        <span class="tooltip">
+                            <i class="fas fa-info-circle"></i>
+                            <span class="tooltip-text">Add your most important responsibilities. Include your most time-consuming tasks.</span>
+                        </span>
+                    </label>
+                    <textarea id="keyResponsibilities" class="form-control" placeholder="• Managing team of 5 developers
+• Client presentations and relationship management 
+• Product roadmap planning"></textarea>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-col form-col-6">
+                        <div class="form-group">
+                            <label for="reportsTo">Reports To</label>
+                            <input type="text" id="reportsTo" class="form-control" placeholder="Name and title">
+                        </div>
+                    </div>
+                    <div class="form-col form-col-6">
+                        <div class="form-group">
+                            <label for="directReports">Direct Reports</label>
+                            <input type="text" id="directReports" class="form-control" placeholder="Number and roles">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="reportingStructure">Reporting Structure
+                        <span class="tooltip">
+                            <i class="fas fa-info-circle"></i>
+                            <span class="tooltip-text">Describe your team hierarchy or upload an org chart if available.</span>
+                        </span>
+                    </label>
+                    <textarea id="reportingStructure" class="form-control" placeholder="Brief description of your team's hierarchical structure"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="orgChartUpload">Upload Org Chart (Optional)</label>
+                    <input type="file" id="orgChartUpload" class="form-control">
+                    <p class="help-text">Accepted file types: PDF, PNG, JPG (Max 5MB)</p>
+                </div>
+                
+                <div class="form-group">
+                    <label for="primaryStakeholders">Primary Stakeholders
+                        <span class="tooltip">
+                            <i class="fas fa-info-circle"></i>
+                            <span class="tooltip-text">Include communication frequency with each stakeholder.</span>
+                        </span>
+                    </label>
+                    <textarea id="primaryStakeholders" class="form-control" placeholder="Name, Role, Communication Frequency (e.g., daily, weekly)"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="industryContext">Industry Context and Company Size</label>
+                    <textarea id="industryContext" class="form-control" placeholder="Brief description of your industry, company size, and relevant business context"></textarea>
+                </div>
+                
+                <div class="btn-container">
+                    <button type="button" class="btn btn-prev" onclick="prevSection(2)">Previous</button>
+                    <button type="button" class="btn btn-next" onclick="nextSection(2)">Next</button>
+                </div>
+            </section>
+            
+            <!-- Section 3: Communication Patterns -->
+            <section id="section3" class="form-section">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <h2 class="section-title">Communication Patterns</h2>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-col form-col-6">
+                        <div class="form-group">
+                            <label for="incomingEmails">Average Daily Incoming Emails
+                                <span class="tooltip">
+                                    <i class="fas fa-info-circle"></i>
+                                    <span class="tooltip-text">Approximate number of emails you receive daily.</span>
+                                </span>
+                            </label>
+                            <input type="number" id="incomingEmails" class="form-control" min="0">
+                        </div>
+                    </div>
+                    <div class="form-col form-col-6">
+                        <div class="form-group">
+                            <label for="outgoingEmails">Average Daily Outgoing Emails
+                                <span class="tooltip">
+                                    <i class="fas fa-info-circle"></i>
+                                    <span class="tooltip-text">Approximate number of emails you send daily.</span>
+                                </span>
+                            </label>
+                            <input type="number" id="outgoingEmails" class="form-control" min="0">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="frequentCorrespondents">Most Frequent Correspondents
+                        <span class="tooltip">
+                            <i class="fas fa-info-circle"></i>
+                            <span class="tooltip-text">Include the relationship type (client, colleague, vendor, etc.).</span>
+                        </span>
+                    </label>
+                    <textarea id="frequentCorrespondents" class="form-control" placeholder="Name, Email, Relationship Type"></textarea>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-col form-col-6">
+                        <div class="form-group">
+                            <label for="internalResponse">Typical Internal Response Time</label>
+                            <select id="internalResponse" class="form-control">
+                                <option value="">Select typical response time</option>
+                                <option value="immediate">Immediate (within an hour)</option>
+                                <option value="sameDay">Same business day</option>
+                                <option value="24hours">Within 24 hours</option>
+                                <option value="48hours">Within 48 hours</option>
+                                <option value="weekly">Weekly</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-col form-col-6">
+                        <div class="form-group">
+                            <label for="externalResponse">Typical External Response Time</label>
+                            <select id="externalResponse" class="form-control">
+                                <option value="">Select typical response time</option>
+                                <option value="immediate">Immediate (within an hour)</option>
+                                <option value="sameDay">Same business day</option>
+                                <option value="24hours">Within 24 hours</option>
+                                <option value="48hours">Within 48 hours</option>
+                                <option value="weekly">Weekly</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Preferred Communication Channels by Priority</label>
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="channel1">1st Priority</label>
+                                <select id="channel1" class="form-control">
+                                    <option value="email">Email</option>
+                                    <option value="slack">Slack</option>
+                                    <option value="teams">Microsoft Teams</option>
+                                    <option value="phone">Phone Call</option>
+                                    <option value="text">Text Message</option>
+                                    <option value="inPerson">In-Person</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="channel2">2nd Priority</label>
+                                <select id="channel2" class="form-control">
+                                    <option value="">Select channel</option>
+                                    <option value="email">Email</option>
+                                    <option value="slack">Slack</option>
+                                    <option value="teams">Microsoft Teams</option>
+                                    <option value="phone">Phone Call</option>
+                                    <option value="text">Text Message</option>
+                                    <option value="inPerson">In-Person</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="channel3">3rd Priority</label>
+                                <select id="channel3" class="form-control">
+                                    <option value="">Select channel</option>
+                                    <option value="email">Email</option>
+                                    <option value="slack">Slack</option>
+                                    <option value="teams">Microsoft Teams</option>
+                                    <option value="phone">Phone Call</option>
+                                    <option value="text">Text Message</option>
+                                    <option value="inPerson">In-Person</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="meetingTypes">Common Meeting Types and Frequency
+                        <span class="tooltip">
+                            <i class="fas fa-info-circle"></i>
+                            <span class="tooltip-text">Include preferred meeting tools (Zoom, Google Meet, etc.).</span>
+                        </span>
+                    </label>
+                    <textarea id="meetingTypes" class="form-control" placeholder="E.g., Weekly team standup (Zoom), Monthly client reviews (Google Meet)"></textarea>
+                </div>
+                
+                <div class="btn-container">
+                    <button type="button" class="btn btn-prev" onclick="prevSection(3)">Previous</button>
+                    <button type="button" class="btn btn-next" onclick="nextSection(3)">Next</button>
+                </div>
+            </section>
+            
+            <!-- Section 4: Goals & Projects -->
+            <section id="section4" class="form-section">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="fas fa-bullseye"></i>
+                    </div>
+                    <h2 class="section-title">Goals & Projects</h2>
+                </div>
+                
+                <div class="form-group">
+                    <label for="activeProjects">Current Active Projects
+                        <span class="tooltip">
+                            <i class="fas fa-info-circle"></i>
+                            <span class="tooltip-text">Include project name, description, deadline, and priority level.</span>
+                        </span>
+                    </label>
+                    <textarea id="activeProjects" class="form-control" placeholder="Project Name | Brief Description | Deadline | Priority (High/Medium/Low)"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="recurringResponsibilities">Recurring Responsibilities
+                        <span class="tooltip">
+                            <i class="fas fa-info-circle"></i>
+                            <span class="tooltip-text">Include frequency (daily, weekly, monthly) and estimated time required.</span>
+                        </span>
+                    </label>
+                    <textarea id="recurringResponsibilities" class="form-control" placeholder="Task | Frequency | Time Estimate"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="quarterlyObjectives">Quarterly Objectives
+                        <span class="tooltip">
+                            <i class="fas fa-info-circle"></i>
+                            <span class="tooltip-text">Consider using SMART goals (Specific, Measurable, Achievable, Relevant, Time-bound).</span>
+                        </span>
+                    </label>
+                    <textarea id="quarterlyObjectives" class="form-control" placeholder="List your key objectives for the current quarter"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="annualGoals">Annual Goals
+                        <span class="tooltip">
+                            <i class="fas fa-info-circle"></i>
+                            <span class="tooltip-text">Consider using SMART goals (Specific, Measurable, Achievable, Relevant, Time-bound).</span>
+                        </span>
+                    </label>
+                    <textarea id="annualGoals" class="form-control" placeholder="List your key goals for the current year"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="careerDevelopment">Career Development Priorities
+                        <span class="tooltip">
+                            <i class="fas fa-info-circle"></i>
+                            <span class="tooltip-text">Include specific skills to acquire, training to attend, mentorship goals, etc.</span>
+                        </span>
+                    </label>
+                    <textarea id="careerDevelopment" class="form-control" placeholder="List specific skills, certifications, or experiences you're working toward"></textarea>
+                </div>
+                
+                <div class="btn-container">
+                    <button type="button" class="btn btn-prev" onclick="prevSection(4)">Previous</button>
+                    <button type="button" class="btn btn-next" onclick="nextSection(4)">Next</button>
+                </div>
+            </section>
+            
+            <!-- Section 5: Workflow Preferences -->
+            <section id="section5" class="form-section">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="fas fa-cogs"></i>
+                    </div>
+                    <h2 class="section-title">Workflow Preferences</h2>
+                </div>
+
+                <div class="form-group">
+                    <label for="preferredWorkHours">Preferred Work Hours
+                        <span class="tooltip">
+                            <i class="fas fa-info-circle"></i>
+                            <span class="tooltip-text">Indicate your ideal working hours (e.g., 8 AM – 4 PM).</span>
+                        </span>
+                    </label>
+                    <input type="text" id="preferredWorkHours" class="form-control" placeholder="e.g., 9 AM – 5 PM">
+                </div>
+
+                <div class="form-group">
+                    <label for="deepWorkTimes">Deep Work Time Blocks
+                        <span class="tooltip">
+                            <i class="fas fa-info-circle"></i>
+                            <span class="tooltip-text">Times you prefer to avoid interruptions and focus deeply.</span>
+                        </span>
+                    </label>
+                    <input type="text" id="deepWorkTimes" class="form-control" placeholder="e.g., 10 AM – 12 PM, 2 PM – 4 PM">
+                </div>
+
+                <div class="form-group">
+                    <label for="preferredTools">Preferred Tools & Platforms
+                        <span class="tooltip">
+                            <i class="fas fa-info-circle"></i>
+                            <span class="tooltip-text">List your go-to software/tools for productivity (e.g., Notion, Asana).</span>
+                        </span>
+                    </label>
+                    <textarea id="preferredTools" class="form-control" placeholder="e.g., Slack, Jira, Trello, Figma"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="taskPrioritization">Task Prioritization Method
+                        <span class="tooltip">
+                            <i class="fas fa-info-circle"></i>
+                            <span class="tooltip-text">Briefly describe how you prioritize your work (e.g., Eisenhower Matrix, daily to-do list).</span>
+                        </span>
+                    </label>
+                    <textarea id="taskPrioritization" class="form-control" placeholder="e.g., Use weekly planning with daily task triage using Kanban board"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="collaborationStyle">Preferred Collaboration Style
+                        <span class="tooltip">
+                            <i class="fas fa-info-circle"></i>
+                            <span class="tooltip-text">Describe your approach to teamwork (e.g., async updates, daily standups).</span>
+                        </span>
+                    </label>
+                    <textarea id="collaborationStyle" class="form-control" placeholder="e.g., Prefer async collaboration with weekly check-ins"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="workflowChallenges">Current Workflow Challenges
+                        <span class="tooltip">
+                            <i class="fas fa-info-circle"></i>
+                            <span class="tooltip-text">Mention any bottlenecks, inefficiencies, or pain points.</span>
+                        </span>
+                    </label>
+                    <textarea id="workflowChallenges" class="form-control" placeholder="e.g., Too many meetings, unclear task ownership, lack of focus time"></textarea>
+                </div>
+
+                <div class="btn-container">
+                    <button type="button" class="btn btn-prev" onclick="prevSection(5)">Previous</button>
+                    <button type="button" class="btn btn-next" onclick="nextSection(5)">Next</button>
+                </div>
+            </section>
+
+            <!-- Section 6: Learning & Development -->
+            <section id="section6" class="form-section">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <h2 class="section-title">Learning & Development</h2>
+                </div>
+
+                <div class="form-group">
+                    <label for="skillsToDevelop">Skills to Develop</label>
+                    <textarea id="skillsToDevelop" class="form-control" placeholder="E.g., Leadership, Public Speaking, Advanced JavaScript, etc."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="preferredLearningMethods">Preferred Learning Methods</label>
+                    <textarea id="preferredLearningMethods" class="form-control" placeholder="E.g., Online courses, Mentorship, Workshops"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="pastTrainings">Past Trainings or Certifications</label>
+                    <textarea id="pastTrainings" class="form-control" placeholder="E.g., PMP Certification, UX Bootcamp, Data Analytics Workshop"></textarea>
+                </div>
+
+                <div class="btn-container">
+                    <button type="button" class="btn btn-prev" onclick="prevSection(6)">Previous</button>
+                    <button type="button" class="btn btn-next" onclick="nextSection(6)">Next</button>
+                </div>
+            </section>
+
+            <!-- Section 7: Priorities -->
+            <section id="section7" class="form-section">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="fas fa-tasks"></i>
+                    </div>
+                    <h2 class="section-title">Priorities</h2>
+                </div>
+
+                <div class="form-group">
+                    <label for="dailyPriorities">Daily Priorities
+                        <span class="tooltip">
+                            <i class="fas fa-info-circle"></i>
+                            <span class="tooltip-text">Tasks that typically need your attention every day.</span>
+                        </span>
+                    </label>
+                    <textarea id="dailyPriorities" class="form-control" placeholder="E.g., Email triage, team check-ins, client follow-ups"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="weeklyPriorities">Weekly Priorities
+                        <span class="tooltip">
+                            <i class="fas fa-info-circle"></i>
+                            <span class="tooltip-text">Regular tasks or meetings that occur weekly.</span>
+                        </span>
+                    </label>
+                    <textarea id="weeklyPriorities" class="form-control" placeholder="E.g., Team meetings, progress reports, planning sessions"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="monthlyPriorities">Monthly Priorities
+                        <span class="tooltip">
+                            <i class="fas fa-info-circle"></i>
+                            <span class="tooltip-text">Important monthly tasks or deadlines.</span>
+                        </span>
+                    </label>
+                    <textarea id="monthlyPriorities" class="form-control" placeholder="E.g., Monthly reports, budget reviews, strategic planning"></textarea>
+                </div>
+
+                <div class="btn-container">
+                    <button type="button" class="btn btn-prev" onclick="prevSection(7)">Previous</button>
+                    <button type="button" class="btn btn-next" onclick="nextSection(7)">Next</button>
+                </div>
+            </section>
+
+            <!-- Section 8: AI Training -->
+            <section id="section8" class="form-section">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <h2 class="section-title">AI Training</h2>
+                </div>
+
+                <div class="form-group">
+                    <label for="communicationStyle">Preferred Communication Style
+                        <span class="tooltip">
+                            <i class="fas fa-info-circle"></i>
+                            <span class="tooltip-text">How would you like PULSE to communicate with you?</span>
+                        </span>
+                    </label>
+                    <select id="communicationStyle" class="form-control">
+                        <option value="">Select style</option>
+                        <option value="formal">Formal</option>
+                        <option value="casual">Casual</option>
+                        <option value="direct">Direct and concise</option>
+                        <option value="detailed">Detailed and thorough</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="aiDecisionMaking">AI Decision-Making Authority
+                        <span class="tooltip">
+                            <i class="fas fa-info-circle"></i>
+                            <span class="tooltip-text">What level of autonomy should PULSE have?</span>
+                        </span>
+                    </label>
+                    <select id="aiDecisionMaking" class="form-control">
+                        <option value="">Select level</option>
+                        <option value="minimal">Minimal - Always ask for approval</option>
+                        <option value="moderate">Moderate - Handle routine matters independently</option>
+                        <option value="high">High - Make most decisions with guidelines</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="additionalInstructions">Additional Instructions for PULSE
+                        <span class="tooltip">
+                            <i class="fas fa-info-circle"></i>
+                            <span class="tooltip-text">Any specific instructions or preferences not covered elsewhere.</span>
+                        </span>
+                    </label>
+                    <textarea id="additionalInstructions" class="form-control" placeholder="E.g., Always include data sources in recommendations, flag emails from specific clients as urgent"></textarea>
+                </div>
+
+                <div class="btn-container">
+                    <button type="button" class="btn btn-prev" onclick="prevSection(8)">Previous</button>
+                    <button type="button" class="btn btn-next" onclick="nextSection(8)">Next</button>
+                </div>
+            </section>
+
+            <!-- Section 9: Personalization -->
+            <section id="section9" class="form-section">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="fas fa-user-cog"></i>
+                    </div>
+                    <h2 class="section-title">Personalization</h2>
+                </div>
+
+                <div class="form-group">
+                    <label for="personalInterests">Personal Interests & Hobbies
+                        <span class="tooltip">
+                            <i class="fas fa-info-circle"></i>
+                            <span class="tooltip-text">Share interests that might help personalize your experience.</span>
+                        </span>
+                    </label>
+                    <textarea id="personalInterests" class="form-control" placeholder="E.g., Photography, hiking, reading sci-fi novels"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="communicationPreferences">Communication Preferences
+                        <span class="tooltip">
+                            <i class="fas fa-info-circle"></i>
+                            <span class="tooltip-text">How you prefer to receive information and updates.</span>
+                        </span>
+                    </label>
+                    <select id="communicationPreferences" class="form-control" multiple>
+                        <option value="bullet">Bullet points</option>
+                        <option value="narrative">Narrative format</option>
+                        <option value="visual">Visual/charts when possible</option>
+                        <option value="brief">Brief summaries</option>
+                        <option value="detailed">Detailed explanations</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="personalTone">Preferred Tone of Interaction
+                        <span class="tooltip">
+                            <i class="fas fa-info-circle"></i>
+                            <span class="tooltip-text">How formal or casual should communications be?</span>
+                        </span>
+                    </label>
+                    <select id="personalTone" class="form-control">
+                        <option value="">Select tone</option>
+                        <option value="formal">Formal and professional</option>
+                        <option value="casual">Casual and conversational</option>
+                        <option value="friendly">Friendly but professional</option>
+                        <option value="direct">Direct and straightforward</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="personalNotes">Additional Personalization Notes
+                        <span class="tooltip">
+                            <i class="fas fa-info-circle"></i>
+                            <span class="tooltip-text">Any other preferences that would help tailor your experience.</span>
+                        </span>
+                    </label>
+                    <textarea id="personalNotes" class="form-control" placeholder="E.g., Prefer emojis in casual communications, appreciate humor, like data-driven insights"></textarea>
+                </div>
+
+                <div class="btn-container">
+                    <button type="button" class="btn btn-prev" onclick="prevSection(9)">Previous</button>
+                    <button type="button" class="btn btn-next" onclick="nextSection(9)">Next</button>
+                </div>
+            </section>
+
+            <!-- Section 10: Consent -->
+            <section id="section10" class="form-section">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="fas fa-file-signature"></i>
+                    </div>
+                    <h2 class="section-title">Consent & Data Usage</h2>
+                </div>
+
+                <div class="form-group consent-group">
+                    <p class="consent-intro">Please review and confirm the following to complete your PULSE™ onboarding:</p>
+                    
+                    <div class="consent-item">
+                        <input type="checkbox" id="dataProcessingConsent" required>
+                        <label for="dataProcessingConsent">I consent to the processing of my personal information as described in the <a href="#" class="privacy-link">Privacy Policy</a>.</label>
+                    </div>
+                    
+                    <div class="consent-item">
+                        <input type="checkbox" id="aiTrainingConsent" required>
+                        <label for="aiTrainingConsent">I understand that my interactions with PULSE™ may be used to improve the service and train the AI system.</label>
+                    </div>
+                    
+                    <div class="consent-item">
+                        <input type="checkbox" id="communicationConsent">
+                        <label for="communicationConsent">I agree to receive occasional updates about new features and improvements to PULSE™.</label>
+                    </div>
+                    
+                    <div class="consent-item">
+                        <input type="checkbox" id="termsConsent" required>
+                        <label for="termsConsent">I have read and agree to the <a href="#" class="terms-link">Terms of Service</a>.</label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="additionalConsent">Additional Consent Notes or Restrictions
+                        <span class="tooltip">
+                            <i class="fas fa-info-circle"></i>
+                            <span class="tooltip-text">Any specific limitations or notes regarding how your data should be used.</span>
+                        </span>
+                    </label>
+                    <textarea id="additionalConsent" class="form-control" placeholder="E.g., Do not use my data for marketing purposes, restrict access to my information to essential personnel only"></textarea>
+                </div>
+
+                <div class="btn-container">
+                    <button type="button" class="btn btn-prev" onclick="prevSection(10)">Previous</button>
+                    <button type="submit" class="btn btn-submit">Complete Onboarding</button>
+                </div>
+            </section>
+        </form>
+
+            <script>
+                // Make sure this function is defined before any other code that might use it
+                function goToSection(sectionNumber) {
+                    console.log("Going to section:", sectionNumber); // Debug log
+                    
+                    // Hide all sections
+                    const allSections = document.querySelectorAll('.form-section');
+                    allSections.forEach(section => {
+                        section.classList.remove('active');
+                    });
+                    
+                    // Show the selected section
+                    const targetSection = document.getElementById(`section${sectionNumber}`);
+                    if (targetSection) {
+                        targetSection.classList.add('active');
+                        updateProgressBar(sectionNumber);
+                        window.scrollTo(0, 0);
+                    } else {
+                        console.error("Section not found:", `section${sectionNumber}`);
+                    }
+                }
+
+                // Update progress bar when navigating between sections
+                function updateProgressBar(sectionNumber) {
+                    const steps = document.querySelectorAll('.step');
+                    steps.forEach(step => {
+                        const stepNum = parseInt(step.getAttribute('data-step'));
+                        if (stepNum <= sectionNumber) {
+                            step.classList.add('active');
+                        } else {
+                            step.classList.remove('active');
+                        }
+                    });
+                }
+
+                function nextSection(current) {
+                    goToSection(current + 1);
+                }
+
+                function prevSection(current) {
+                    goToSection(current - 1);
+                }
+
+                // Initialize the form and add click handlers
+                document.addEventListener('DOMContentLoaded', function() {
+                    // Initialize first section
+                    updateProgressBar(1);
+                    
+                    // Add click handlers to all steps
+                    const steps = document.querySelectorAll('.step');
+                    steps.forEach(step => {
+                        const stepNum = parseInt(step.getAttribute('data-step'));
+                        step.addEventListener('click', function() {
+                            goToSection(stepNum);
+                        });
+                    });
+                    
+                    // Form submission handler
+                    const form = document.getElementById('onboardingForm');
+                    if (form) {
+                        form.addEventListener('submit', function(e) {
+                            e.preventDefault();
+                            
+                            // Validate required consent checkboxes
+                            const requiredCheckboxes = document.querySelectorAll('input[type="checkbox"][required]');
+                            let valid = true;
+                            
+                            requiredCheckboxes.forEach(checkbox => {
+                                if (!checkbox.checked) {
+                                    valid = false;
+                                    checkbox.parentElement.classList.add('error');
+                                } else {
+                                    checkbox.parentElement.classList.remove('error');
+                                }
+                            });
+                            
+                            if (!valid) {
+                                alert('Please agree to all required consent items to complete the onboarding.');
+                                return;
+                            }
+                            
+                            // Collect form data
+                            const formData = new FormData(this);
+                            const formObject = {};
+                            
+                            formData.forEach((value, key) => {
+                                formObject[key] = value;
+                            });
+                            
+                            // Here you would typically send the data to your server
+                            console.log('Form data:', formObject);
+                            
+                            // Show submission confirmation
+                            alert('Thank you for completing the PULSE™ onboarding process. Your AI assistant will be configured based on your preferences.');
+                        });
+                    }
+                });
+            </script>
+
+        </body>
+</html>

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+  <div class="container onboarding-container">
+    <header class="onboarding-header">
+      <div class="logo">
+        <span class="logo-text">PULSE<span class="logo-tm">™</span></span>
+      </div>
+      <h1>Onboarding</h1>
+      <div class="user-info">
+        <span id="user-id" data-user-id="<%= userId %>">User ID: <%= userId.substring(0, 8) %>...</span>
+      </div>
+    </header>
+
+    <div class="onboarding-layout">
+      <aside class="sidebar">
+        <div class="progress-container">
+          <h3>Your Progress</h3>
+          <div class="progress-bar">
+            <div class="progress-fill" style="width: 0%"></div>
+          </div>
+          <div class="progress-text">0% Complete</div>
+        </div>
+
+        <div class="sections-list">
+          <h3>Sections</h3>
+          <ul>
+            <% sections.forEach((section, index) => { %>
+              <li class="section-item <%= index === 0 ? 'active' : '' %>" data-section="<%= section %>">
+                <span class="section-number"><%= index + 1 %></span>
+                <span class="section-name"><%= formatSectionName(section) %></span>
+                <span class="section-status">
+                  <i class="fas fa-circle-notch"></i>
+                </span>
+              </li>
+            <% }); %>
+          </ul>
+        </div>
+      </aside>
+
+      <main class="chat-container">
+        <div class="chat-messages" id="chat-messages">
+          <!-- Messages will be added here dynamically -->
+        </div>
+
+        <div class="chat-input-container">
+          <div class="input-controls">
+            <button class="voice-btn" id="voice-btn" title="Voice Input">
+              <i class="fas fa-microphone"></i>
+            </button>
+            <input type="text" id="message-input" placeholder="Type your message here...">
+            <button class="send-btn" id="send-btn" title="Send Message">
+              <i class="fas fa-paper-plane"></i>
+            </button>
+          </div>
+          <div class="input-options">
+            <button class="option-btn" data-command="help">Help</button>
+            <button class="option-btn" data-command="skip">Skip Section</button>
+            <button class="option-btn" data-command="back">Previous Section</button>
+            <button class="option-btn" data-command="progress">Show Progress</button>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <footer>
+      <p>&copy; <%= new Date().getFullYear() %> PULSE™ Smart Inbox. All rights reserved.</p>
+    </footer>
+  </div>
+
+  <audio id="audio-player" style="display: none;"></audio>
+
+  <script>
+    // Helper function to format section names
+    function formatSectionName(sectionName) {
+      return sectionName
+        .replace(/([A-Z])/g, ' $1')
+        .replace(/^./, str => str.toUpperCase());
+    }
+  </script>
+  <script src="/js/onboarding.js"></script>
+</body>
+</html>
+
+<%
+// Helper function to format section names
+function formatSectionName(sectionName) {
+  return sectionName
+    .replace(/([A-Z])/g, ' $1')
+    .replace(/^./, str => str.toUpperCase());
+}
+%>
